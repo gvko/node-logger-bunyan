@@ -1,0 +1,16 @@
+# JetBrains
+.idea/
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Node.js
+node_modules/
+
+# Istanbul output
+.nyc_output/
+coverage
+
+package-lock.json
+*.log

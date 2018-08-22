@@ -1,0 +1,65 @@
+{
+  "name": "node-logger-esmiley",
+  "version": "1.0.0",
+  "description": "A wrapper of the Bunyan logger library, modified to suit eSmiley's needs.",
+  "main": "dist/",
+  "types": "dist/",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@bitbucket.esmiley.dk:7999/test/node-logger-esmiley.git"
+  },
+  "keywords": [
+    "logger",
+    "node",
+    "nodejs",
+    "log",
+    "bunyan",
+    "esmiley"
+  ],
+  "engines": {
+    "node": "~6.11.1"
+  },
+  "nyc": {
+    "include": [
+      "dist/*.js",
+      "dist/**/*.js"
+    ],
+    "extension": [
+      ".js"
+    ],
+    "reporter": [
+      "lcovonly"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "scripts": {
+    "make": "gulp",
+    "test": "nyc mocha --recursive test/",
+    "make-test": "npm run make && npm test"
+  },
+  "dependencies": {
+    "commons-config-node": "git+ssh://git@bitbucket.esmiley.dk:7999/esr/commons-config-node.git#v3.0",
+    "bunyan": "~1.8.12",
+    "bunyan-pretty": "0.0.1",
+    "logdna-bunyan": "~1.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.0",
+    "@types/node": "^10.5.7",
+    "chai": "^4.1.0",
+    "gulp": "^3.9.1",
+    "gulp-tslint": "^7.1",
+    "gulp-typescript": "^3.1.6",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.3.0",
+    "nyc": "^11.0.3",
+    "sinon": "^2.3.7",
+    "tslint": "^4.5.1",
+    "tslint-eslint-rules": "^3.5.1",
+    "typescript": "^2.2.1"
+  },
+  "author": "eSmiley A/S",
+  "homepage": "https://www.esmiley.com",
+  "license": "MIT"
+}
