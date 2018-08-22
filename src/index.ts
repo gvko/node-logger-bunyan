@@ -8,9 +8,10 @@ const LogDnaBunyan: any = require('logdna-bunyan').BunyanStream;
  * Initializes the logger object and sets it as a global log object.
  *
  * @param serviceName {string}  The name of the current service, f.e. 'service-foodwaste'
+ * @param key         {string}  The access key for the LaaS
  * @return {*}
  */
-export function init(serviceName: string): void {
+export function init(serviceName: string, key?: string): void {
   /* We only declare DEBUG and INFO because they are the lowest levels that we need. Any other levels are higher:
    *  fatal  (60)
    *  error  (50)
@@ -44,7 +45,7 @@ export function init(serviceName: string): void {
    */
   if (!['default', 'test'].includes(process.env.NODE_ENV)) {
     // it's not local dev env -> case 2
-    const logDnaKey: string = process.env.LOG_DNA_KEY;
+    const logDnaKey: string = process.env.LOG_DNA_KEY || key;
 
     if (!logDnaKey) {
       console.log('*** FATAL ERROR: LogDNA ingestion key is not set as environment variable. Exiting now...');
