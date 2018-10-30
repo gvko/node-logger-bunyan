@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const bunyan = require('bunyan');
 const bunyanPretty = require('bunyan-pretty');
 const LogDnaBunyan = require('logdna-bunyan').BunyanStream;
 /**
- * Initializes the logger object and sets it as a global log object.
+ * Creates and initializes the logger object.
  *
  * @param serviceName {string}  The name of the current service, f.e. 'service-foodwaste'
  * @param key         {string}  The access key for the LaaS
@@ -68,9 +68,6 @@ function init(serviceName, key) {
     else {
         console.log(`*** TEST env... do not log`);
     }
-    /*
-     * Set the logger as global log object
-     */
-    global.log = logger;
+    return logger;
 }
 exports.init = init;

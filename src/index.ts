@@ -1,17 +1,23 @@
-'use strict';
-
 const bunyan: any = require('bunyan');
 const bunyanPretty: any = require('bunyan-pretty');
 const LogDnaBunyan: any = require('logdna-bunyan').BunyanStream;
 
+export interface BunyanLogger {
+  debug: any;
+  info: any;
+  error: any;
+  warn: any;
+  addStream: any;
+}
+
 /**
- * Initializes the logger object and sets it as a global log object.
+ * Creates and initializes the logger object.
  *
  * @param serviceName {string}  The name of the current service, f.e. 'service-foodwaste'
  * @param key         {string}  The access key for the LaaS
  * @return {*}
  */
-export function init(serviceName: string, key?: string): void {
+export function init(serviceName: string, key?: string): BunyanLogger {
   /* We only declare DEBUG and INFO because they are the lowest levels that we need. Any other levels are higher:
    *  fatal  (60)
    *  error  (50)
@@ -23,7 +29,7 @@ export function init(serviceName: string, key?: string): void {
    * DEBUG and above will be logged in console and anything from INFO and above will be logged in the server.
    * This way we get INFO and above to be in both console and server.
    */
-  const logger: any = bunyan.createLogger({
+  const logger: BunyanLogger = bunyan.createLogger({
     name: process.env.HOSTNAME || serviceName, // in our ETCD config, the hostname is actually the app name + ID, eg. "service-foodwaste-1"
     streams: []
   });
@@ -77,8 +83,5 @@ export function init(serviceName: string, key?: string): void {
     console.log(`*** TEST env... do not log`);
   }
 
-  /*
-   * Set the logger as global log object
-   */
-  global.log = logger;
+  return logger;
 }
