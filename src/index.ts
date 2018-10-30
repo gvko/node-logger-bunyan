@@ -44,23 +44,21 @@ export function init(serviceName: string, key?: string): BunyanLogger {
 
   /*
    * Cases:
-   * (1) If local dev env (NODE_ENV == 'default') -> log only to console, from level 'debug'
+   * (1) If local dev env (NODE_ENV == 'default' or 'development') -> log only to console, from level 'debug'
    *
-   * (2) If deployment env (NODE_ENV != 'default' or != 'test') -> log to Log Server (LogDNA)
+   * (2) If deployment env (NODE_ENV != 'default' or != 'development' or != 'test') -> log to Log Server (LogDNA)
    ** if logging of debug is enabled (DEBUG_ENABLE == 'true') -> log from 'debug' level, otherwise from 'info'
    */
-  if (!['default', 'test'].includes(process.env.NODE_ENV)) {
+  if (!['default', 'development', 'test'].includes(process.env.NODE_ENV)) {
     // it's not local dev env -> case 2
-    const logDnaKey: string = process.env.LOG_DNA_KEY || key;
-
-    if (!logDnaKey) {
-      console.log('*** FATAL ERROR: LogDNA ingestion key is not set as environment variable. Exiting now...');
+    if (!key) {
+      console.log('*** FATAL ERROR: Logging service ingestion key is not provided. Exiting now...');
       process.exit(1);
     }
 
     const logServerStream: any = {
       stream: new LogDnaBunyan({
-        key: logDnaKey,
+        key,
         hostname: process.env.ENVIRONMENT || `temp-wrong-env_${process.env.NODE_ENV}`, // in our ETCD config, we declare separately the env name: development, staging, production
         index_meta: true
       }),
