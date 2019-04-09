@@ -5,11 +5,16 @@ export interface BunyanLogger {
     warn: any;
     addStream: any;
 }
+export interface Options {
+    logTestEnv: boolean;
+    bottomLogLevel: string;
+    key: string;
+}
 /**
  * Creates and initializes the logger object.
  *
- * @param serviceName {string}  The name of the current service, f.e. 'service-foodwaste'
- * @param key         {string}  The access key for the LaaS
+ * @param serviceName {string}  The name of the current service, f.e. 'example-service-name'
+ * @param opts        {Options} Additional options to consider when initializing the logger object
  * @return {*}
  */
-export declare function init(serviceName: string, key?: string): BunyanLogger;
+export declare function init(serviceName: string, opts?: Options): BunyanLogger;

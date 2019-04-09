@@ -1,11 +1,11 @@
 const gulp = require('gulp');
 const tsc = require('gulp-typescript');
 const tslint = require('gulp-tslint');
-const tsProject = tsc.createProject('./node_modules/.bin/tsconfig.json');
+const tsProject = tsc.createProject('./tsconfig.json');
 
 const srcGlob = 'src/**/*';
 const outDir = 'dist';
-const tslintConfig = './node_modules/.bin/tslint.json';
+const tslintConfig = './tslint.json';
 
 /*
  * Compile

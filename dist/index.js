@@ -6,11 +6,12 @@ const LogDnaBunyan = require('logdna-bunyan').BunyanStream;
 /**
  * Creates and initializes the logger object.
  *
- * @param serviceName {string}  The name of the current service, f.e. 'service-foodwaste'
- * @param key         {string}  The access key for the LaaS
+ * @param serviceName {string}  The name of the current service, f.e. 'example-service-name'
+ * @param opts        {Options} Additional options to consider when initializing the logger object
  * @return {*}
  */
-function init(serviceName, key) {
+function init(serviceName, opts) {
+    const options = opts ? opts : {};
     /* We only declare DEBUG and INFO because they are the lowest levels that we need. Any other levels are higher:
      *  fatal  (60)
      *  error  (50)
@@ -31,7 +32,7 @@ function init(serviceName, key) {
         stream: bunyanPretty()
     };
     let logDestination = 'console';
-    let logLevel = 'debug';
+    let logLevel = options.bottomLogLevel ? options.bottomLogLevel : 'debug';
     /*
      * Cases:
      * (1) If local dev env (NODE_ENV == 'default' or 'development') -> log only to console, from level 'debug'
@@ -39,19 +40,19 @@ function init(serviceName, key) {
      * (2) If deployment env (NODE_ENV != 'default' or != 'development' or != 'test') -> log to Log Server (LogDNA)
      ** if logging of debug is enabled (DEBUG_ENABLE == 'true') -> log from 'debug' level, otherwise from 'info'
      */
-    if (!['default', 'development', 'test'].includes(process.env.NODE_ENV)) {
+    if (!['default', 'local', 'development', 'test'].includes(process.env.NODE_ENV)) {
         // it's not local dev env -> case 2
-        if (!key) {
-            console.log('*** FATAL ERROR: Logging service ingestion key is not provided. Exiting now...');
+        if (!options.key) {
+            console.log('===> FATAL ERROR: Logging service ingestion key is not provided. Exiting now...');
             process.exit(1);
         }
         const logServerStream = {
             stream: new LogDnaBunyan({
-                key,
-                hostname: process.env.ENVIRONMENT || `temp-wrong-env_${process.env.NODE_ENV}`,
+                key: options.key,
+                hostname: process.env.NODE_ENV,
                 index_meta: true
             }),
-            type: 'raw' // has to be used for LogDNA LaaS
+            type: 'raw'
         };
         Object.assign(stream, logServerStream);
         logDestination = 'the Log Server';
@@ -60,12 +61,12 @@ function init(serviceName, key) {
             logLevel = 'info';
         }
     }
-    if (process.env.NODE_ENV !== 'test') {
-        logger.addStream(Object.assign(stream, { level: logLevel }));
-        console.log(`*** LOGGING TO ${logDestination} FROM LEVEL ${logLevel}`);
+    if (process.env.NODE_ENV === 'test' && (!options.logTestEnv)) {
+        console.log(`===> TEST env... do not log`);
     }
     else {
-        console.log(`*** TEST env... do not log`);
+        logger.addStream(Object.assign(stream, { level: logLevel }));
+        console.log(`===> LOGGING TO ${logDestination} FROM LEVEL ${logLevel}`);
     }
     return logger;
 }

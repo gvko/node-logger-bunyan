@@ -10,14 +10,22 @@ export interface BunyanLogger {
   addStream: any;
 }
 
+export interface Options {
+  logTestEnv: boolean;
+  bottomLogLevel: string;
+  key: string;
+}
+
 /**
  * Creates and initializes the logger object.
  *
- * @param serviceName {string}  The name of the current service, f.e. 'service-foodwaste'
- * @param key         {string}  The access key for the LaaS
+ * @param serviceName {string}  The name of the current service, f.e. 'example-service-name'
+ * @param opts        {Options} Additional options to consider when initializing the logger object
  * @return {*}
  */
-export function init(serviceName: string, key?: string): BunyanLogger {
+export function init(serviceName: string, opts?: Options): BunyanLogger {
+  const options: Options = opts ? opts : {} as Options;
+
   /* We only declare DEBUG and INFO because they are the lowest levels that we need. Any other levels are higher:
    *  fatal  (60)
    *  error  (50)
@@ -30,7 +38,7 @@ export function init(serviceName: string, key?: string): BunyanLogger {
    * This way we get INFO and above to be in both console and server.
    */
   const logger: BunyanLogger = bunyan.createLogger({
-    name: process.env.HOSTNAME || serviceName, // in our ETCD config, the hostname is actually the app name + ID, eg. "service-foodwaste-1"
+    name: process.env.HOSTNAME || serviceName,
     streams: []
   });
 
@@ -40,7 +48,7 @@ export function init(serviceName: string, key?: string): BunyanLogger {
   };
 
   let logDestination: string = 'console';
-  let logLevel: string = 'debug';
+  let logLevel: string = options.bottomLogLevel ? options.bottomLogLevel : 'debug';
 
   /*
    * Cases:
@@ -49,20 +57,20 @@ export function init(serviceName: string, key?: string): BunyanLogger {
    * (2) If deployment env (NODE_ENV != 'default' or != 'development' or != 'test') -> log to Log Server (LogDNA)
    ** if logging of debug is enabled (DEBUG_ENABLE == 'true') -> log from 'debug' level, otherwise from 'info'
    */
-  if (!['default', 'development', 'test'].includes(process.env.NODE_ENV)) {
+  if (!['default', 'local', 'development', 'test'].includes(process.env.NODE_ENV)) {
     // it's not local dev env -> case 2
-    if (!key) {
-      console.log('*** FATAL ERROR: Logging service ingestion key is not provided. Exiting now...');
+    if (!options.key) {
+      console.log('===> FATAL ERROR: Logging service ingestion key is not provided. Exiting now...');
       process.exit(1);
     }
 
     const logServerStream: any = {
       stream: new LogDnaBunyan({
-        key,
-        hostname: process.env.ENVIRONMENT || `temp-wrong-env_${process.env.NODE_ENV}`, // in our ETCD config, we declare separately the env name: development, staging, production
+        key: options.key,
+        hostname: process.env.NODE_ENV,
         index_meta: true
       }),
-      type: 'raw' // has to be used for LogDNA LaaS
+      type: 'raw'
     };
 
     Object.assign(stream, logServerStream);
@@ -74,11 +82,11 @@ export function init(serviceName: string, key?: string): BunyanLogger {
     }
   }
 
-  if (process.env.NODE_ENV !== 'test') {
-    logger.addStream(Object.assign(stream, { level: logLevel }));
-    console.log(`*** LOGGING TO ${logDestination} FROM LEVEL ${logLevel}`);
+  if (process.env.NODE_ENV === 'test' && (!options.logTestEnv)) {
+    console.log(`===> TEST env... do not log`);
   } else {
-    console.log(`*** TEST env... do not log`);
+    logger.addStream(Object.assign(stream, { level: logLevel }));
+    console.log(`===> LOGGING TO ${logDestination} FROM LEVEL ${logLevel}`);
   }
 
   return logger;
