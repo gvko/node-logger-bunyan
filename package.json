@@ -23,12 +23,12 @@
   },
   "dependencies": {
     "bunyan": "^1.8.12",
-    "logdna-bunyan": "^1.1.0"
+    "logdna-bunyan": "^1.1.0",
+    "bunyan-pretty": "0.0.1"
   },
   "devDependencies": {
     "@types/bunyan": "^1.8.6",
     "@types/node": "^12.0.2",
-    "bunyan-pretty": "0.0.1",
     "commons-node": "git+https://github.com/gvko/common-ts-config.git",
     "gulp": "^4.0.2",
     "gulp-nodemon": "^2.4.2",
