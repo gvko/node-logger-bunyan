@@ -1,5 +1,5 @@
 {
-  "name": "node-logger",
+  "name": "node-logger-bunyan",
   "version": "1.0.0",
   "description": "A wrapper of the Bunyan logger library",
   "main": "dist/",
