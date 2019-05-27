@@ -6,7 +6,7 @@
   "types": "dist/",
   "repository": {
     "type": "git",
-    "url": "git@github.com:gvko/node-logger-bynyan.git"
+    "url": "git+https://github.com/gvko/node-logger-bynyan.git"
   },
   "keywords": [
     "logger",
