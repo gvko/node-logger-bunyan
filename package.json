@@ -6,7 +6,7 @@
   "types": "dist/",
   "repository": {
     "type": "git",
-    "url": "git@github.com:gvko/node-logger.git"
+    "url": "git@github.com:gvko/node-logger-bynyan.git"
   },
   "keywords": [
     "logger",
@@ -16,29 +16,29 @@
     "bunyan"
   ],
   "engines": {
-    "node": "~11.12.0"
+    "node": "~12.0.0"
   },
   "scripts": {
     "make": "gulp"
   },
   "dependencies": {
     "bunyan": "^1.8.12",
-    "bunyan-pretty": "0.0.1",
-    "logdna-bunyan": "^1.0.1"
+    "logdna-bunyan": "^1.1.0"
   },
   "devDependencies": {
-    "@types/node": "^11.13.2",
-    "gulp": "^3.9.1",
-    "gulp-tslint": "^7.1",
-    "gulp-typescript": "^3.1.6",
-    "tslint": "^4.5.1",
-    "tslint-eslint-rules": "^3.5.1",
-    "typescript": "^2.2.1"
+    "@types/bunyan": "^1.8.6",
+    "@types/node": "^12.0.2",
+    "bunyan-pretty": "0.0.1",
+    "commons-node": "git+https://github.com/gvko/common-ts-config.git",
+    "gulp": "^4.0.2",
+    "gulp-nodemon": "^2.4.2",
+    "gulp-tslint": "^8.1.4",
+    "gulp-typescript": "^5.0.1"
   },
   "author": "Galin Kostov <gvko@pm.me>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gvko/node-logger/issues"
+    "url": "https://github.com/gvko/node-logger-bunyan/issues"
   },
-  "homepage": "https://github.com/gvko/node-logger#readme"
+  "homepage": "https://github.com/gvko/node-logger-bunyan#readme"
 }

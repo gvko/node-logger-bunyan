@@ -13,8 +13,9 @@ export interface Options {
 /**
  * Creates and initializes the logger object.
  *
- * @param serviceName {string}  The name of the current service, f.e. 'example-service-name'
- * @param opts        {Options} Additional options to consider when initializing the logger object
+ * @param serviceName   {string}  The name of the current service, f.e. 'example-service-name'
+ * @param logInTestEnv  {boolean} Specify whether the service should log in Test env or not
+ * @param logDnaKey     {string}  Ingestion key for LogDNA
  * @return {*}
  */
-export declare function init(serviceName: string, opts?: Options): BunyanLogger;
+export default function (serviceName: string, logInTestEnv: boolean, logDnaKey: string): BunyanLogger;
