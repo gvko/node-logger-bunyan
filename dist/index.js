@@ -6,12 +6,13 @@ const LogDnaBunyan = require('logdna-bunyan').BunyanStream;
 /**
  * Creates and initializes the logger object.
  *
- * @param serviceName   {string}  The name of the current service, f.e. 'example-service-name'
- * @param logInTestEnv  {boolean} Specify whether the service should log in Test env or not
- * @param logDnaKey     {string}  Ingestion key for LogDNA
+ * @param serviceName {string}  The name of the current service, f.e. 'example-service-name'
+ * @param options     {Options} Additional options. Important one is `logInTestEnv` which specifies whether the logger
+ * should log when the running env is TEST
  * @return {*}
  */
-function default_1(serviceName, logInTestEnv, logDnaKey) {
+function default_1(serviceName, options) {
+    const opts = options ? options : {};
     const logger = bunyan.createLogger({
         name: process.env.HOSTNAME || serviceName,
         streams: []
@@ -29,13 +30,13 @@ function default_1(serviceName, logInTestEnv, logDnaKey) {
      ** if logging of debug is enabled (DEBUG_ENABLE == 'true') -> log from 'debug' level, otherwise from 'info'
      */
     if (process.env.NODE_ENV === 'production') {
-        if (!logDnaKey) {
+        if (!opts.logDnaKey) {
             console.log('===> FATAL ERROR: Logging service ingestion key is not provided. Exiting now...');
             process.exit(1);
         }
         const logServerStream = {
             stream: new LogDnaBunyan({
-                key: logDnaKey,
+                key: opts.logDnaKey,
                 hostname: process.env.NODE_ENV,
                 index_meta: true
             }),
@@ -44,7 +45,7 @@ function default_1(serviceName, logInTestEnv, logDnaKey) {
         Object.assign(stream, logServerStream);
         logDestination = 'LogDNA service';
     }
-    if (process.env.NODE_ENV === 'test' && !logInTestEnv) {
+    if (process.env.NODE_ENV === 'test' && !opts.logInTestEnv) {
         console.log(`===> TEST env... do not log`);
     }
     else {

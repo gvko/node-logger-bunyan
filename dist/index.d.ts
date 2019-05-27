@@ -6,16 +6,15 @@ export interface BunyanLogger {
     addStream: any;
 }
 export interface Options {
-    logTestEnv: boolean;
-    bottomLogLevel: string;
-    key: string;
+    logInTestEnv: boolean;
+    logDnaKey?: string;
 }
 /**
  * Creates and initializes the logger object.
  *
- * @param serviceName   {string}  The name of the current service, f.e. 'example-service-name'
- * @param logInTestEnv  {boolean} Specify whether the service should log in Test env or not
- * @param logDnaKey     {string}  Ingestion key for LogDNA
+ * @param serviceName {string}  The name of the current service, f.e. 'example-service-name'
+ * @param options     {Options} Additional options. Important one is `logInTestEnv` which specifies whether the logger
+ * should log when the running env is TEST
  * @return {*}
  */
-export default function (serviceName: string, logInTestEnv: boolean, logDnaKey: string): BunyanLogger;
+export default function (serviceName: string, options?: Options): BunyanLogger;

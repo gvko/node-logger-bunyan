@@ -11,15 +11,22 @@ export interface BunyanLogger {
   addStream: any;
 }
 
+export interface Options {
+  logInTestEnv: boolean;
+  logDnaKey?: string;
+}
+
 /**
  * Creates and initializes the logger object.
  *
- * @param serviceName   {string}  The name of the current service, f.e. 'example-service-name'
- * @param logInTestEnv  {boolean} Specify whether the service should log in Test env or not
- * @param logDnaKey     {string}  Ingestion key for LogDNA
+ * @param serviceName {string}  The name of the current service, f.e. 'example-service-name'
+ * @param options     {Options} Additional options. Important one is `logInTestEnv` which specifies whether the logger
+ * should log when the running env is TEST
  * @return {*}
  */
-export default function (serviceName: string, logInTestEnv: boolean, logDnaKey?: string): BunyanLogger {
+export default function (serviceName: string, options?: Options): BunyanLogger {
+  const opts: Options = options ? options : {} as Options;
+
   const logger: BunyanLogger = bunyan.createLogger({
     name: process.env.HOSTNAME || serviceName,
     streams: []
@@ -40,14 +47,14 @@ export default function (serviceName: string, logInTestEnv: boolean, logDnaKey?:
    ** if logging of debug is enabled (DEBUG_ENABLE == 'true') -> log from 'debug' level, otherwise from 'info'
    */
   if (process.env.NODE_ENV === 'production') {
-    if (!logDnaKey) {
+    if (!opts.logDnaKey) {
       console.log('===> FATAL ERROR: Logging service ingestion key is not provided. Exiting now...');
       process.exit(1);
     }
 
     const logServerStream: any = {
       stream: new LogDnaBunyan({
-        key: logDnaKey,
+        key: opts.logDnaKey,
         hostname: process.env.NODE_ENV,
         index_meta: true
       }),
@@ -58,7 +65,7 @@ export default function (serviceName: string, logInTestEnv: boolean, logDnaKey?:
     logDestination = 'LogDNA service';
   }
 
-  if (process.env.NODE_ENV === 'test' && !logInTestEnv) {
+  if (process.env.NODE_ENV === 'test' && !opts.logInTestEnv) {
     console.log(`===> TEST env... do not log`);
   } else {
     logger.addStream(Object.assign(stream));
